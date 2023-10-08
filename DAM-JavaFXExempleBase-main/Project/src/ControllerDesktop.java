@@ -2,10 +2,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,7 +49,7 @@ public class ControllerDesktop implements Initializable{
         // Para mostrar mensage de carga
         showLoading();
 
-        // Perdir los datos
+        // Pedir los datos
         appData.load(opcio, (result) -> {
             if (result == null) {
                 System.out.println("ControllerDesktop: Error loading.");
@@ -64,7 +64,6 @@ public class ControllerDesktop implements Initializable{
         
     }
     
-    // ?? Tenia un Throws Exception ??
     public void showList(String opcioCarregada) throws Exception{
 
         // Si s'ha carregat una altra opció, no cal fer res
@@ -130,13 +129,27 @@ public class ControllerDesktop implements Initializable{
         // Obtenir les dades de l'opció seleccionada
         JSONObject dades = appData.getItemData(type, index);
 
-        // Carregar la plantilla
-        URL resource = this.getClass().getResource("assets/template_info_item.fxml");
+        // Carregar la plantilla en funcion del tipo
+        URL resource = this.getClass().getResource("assets/template_info_item.fxml");;
+        switch (type) {
+            case "Consoles":
+                resource = this.getClass().getResource("assets/template_info_consola.fxml"); 
+                break;
+            case "Jocs":
+                resource = this.getClass().getResource("assets/templato_info_joc.fxml");
+                break;
+            case "Personatges":
+                resource = this.getClass().getResource("assets/template_info_personatge.fxml");
+                
+                break;
+            default:
+                break;
+        }
 
         // Esborrar la informació actual
         info.getChildren().clear();
 
-        // Carregar la llista amb les dades
+        // Carregar la llista amb les dades dependiendo de que tipo sea personaje, juego o consola
         try {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent itemTemplate = loader.load();
@@ -144,9 +157,22 @@ public class ControllerDesktop implements Initializable{
             itemController.setImage("assets/images/" + dades.getString("imatge"));
             itemController.setTitle(dades.getString("nom"));
             switch (type) {
-            case "Consoles": itemController.setText(dades.getString("procesador")); break;
-            case "Jocs": itemController.setText(dades.getString("descripcio")); break;
-            case "Personatges": itemController.setText(dades.getString("nom_del_videojoc")); break;
+            case "Consoles": 
+                itemController.setText(dades.getString("procesador"));
+                itemController.setRectangleColor(getColor(dades.getString("color")));
+                itemController.setYear(dades.getString("data"));
+                itemController.setProcessor(dades.getString("procesador"));
+                itemController.setSales(dades.getInt("venudes"));
+                break;
+            case "Jocs": 
+                itemController.setYear(Integer.toString(dades.getInt("any")));
+                itemController.setGenre(dades.getString("tipus"));
+                itemController.setText(dades.getString("descripcio")); 
+                break;
+            case "Personatges": 
+                itemController.setText(dades.getString("nom_del_videojoc")); 
+                itemController.setRectangleColor(getColor(dades.getString("color")));
+                break;
         }
 
         // Afegeix la informació a la vista
@@ -161,6 +187,34 @@ public class ControllerDesktop implements Initializable{
         } catch (Exception e) {
         System.out.println("ControllerDesktop: Error showing info.");
         System.out.println(e);
+        }
+    }
+
+    // Funcion para sacar el Color
+    Color getColor (String colorName) {
+        switch (colorName) {
+            case "red":
+                return Color.RED;
+            case "green":
+                return Color.GREEN;
+            case "pink":
+                return Color.PINK;
+            case "orange":
+                return Color.ORANGE;
+            case "brown":
+                return Color.BROWN;
+            case "yellow":
+                return Color.YELLOW;
+            case "grey":
+                return Color.GREY;
+            case "black":
+                return Color.BLACK;
+            case "white":
+                return Color.rgb(253, 239, 239);
+            case "purple":
+                return Color.PURPLE;
+            default:
+                return Color.AQUAMARINE;
         }
     }
 }
