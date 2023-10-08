@@ -26,6 +26,7 @@ public class Main extends Application {
         UtilsViews.addView(getClass(), "Mobile0", "assets/layout_mobile_0.fxml");
 
         UtilsViews.addView(getClass(), "Mobile1", "assets/layout_mobile_1.fxml");
+        UtilsViews.addView(getClass(), "Mobile2", "assets/layout_mobile_2.fxml");
 
         Scene scene = new Scene(UtilsViews.parentContainer);
         
